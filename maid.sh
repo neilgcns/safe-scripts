@@ -220,6 +220,10 @@ sleep 1
 safe networks switch $SAFENET
 sleep 1
 6
+
+# generate keys for cli
+/usr/local/bin/safe keys create --for-cli
+
 ############################################## start safe network local babay fleming
 
 elif [[ "$SAFENET" == "baby-fleming" ]]; then
@@ -243,7 +247,11 @@ sleep 1
 /usr/local/bin/safe networks switch baby-fleming
 sleep 1
 
+# generate keys for cli
+/usr/local/bin/safe keys create --for-cli
+
 LOG_FILES="$HOME/.safe/node/baby-fleming-nodes/sn-node-genesis/sn_node.log "
+
 
 for (( c=1; c<=$NODE_NUMBER; c++ ))
 do
@@ -260,7 +268,14 @@ RUST_LOG=sn_node=trace,qp2p=info\
 export LOG_FILES="$LOG_FILES $HOME/.safe/node/baby-fleming-nodes/sn-node-$c/sn_node.log "
 echo Node $c started
 sleep 10
+
 done
+
+# generate wallet
+WALLET=$(safe wallet create | grep -o -P '(?<=").*(?=\")')
+echo $WALLET > ~/.safe/wallet
+echo wallet generated
+sleep 2
 
 ############################################## start safe network with node live network
 
@@ -273,6 +288,16 @@ sleep 1
 safe networks switch $SAFENET
 sleep 5
 
+# generate keys for cli
+/usr/local/bin/safe keys create --for-cli
+
+
+# generate wallet
+WALLET=$(safe wallet create | grep -o -P '(?<=").*(?=\")')
+echo $WALLET > ~/.safe/wallet
+echo wallet generated
+sleep 2
+
 # RUST_LOG=sn_node=trace,qp2p=info \
 # --public-addr "$PUBLIC_IP":$SAFE_PORT \
 # --skip-auto-port-forwarding \
@@ -284,6 +309,7 @@ echo -n "#!/bin/bash
 	--local-addr "$LOCAL_IP":$SAFE_PORT \
 	--log-dir "$LOG_DIR" \
 	--network-contacts-file "$HOME/.safe/$SAFENET" & disown" \
+	--wallet-id $WALLET \
 | tee $HOME/.safe/node/start-node.sh &> /dev/null
 
 chmod u+x $HOME/.safe/node/start-node.sh
@@ -306,15 +332,12 @@ sleep 3
 
 fi
 
-# generate keys for cli
-/usr/local/bin/safe keys create --for-cli
-
 
 # make script to start vdash with relavant log files
 echo -n "#!/bin/bash
 vdash $LOG_FILES" \
-| tee $HOME/safe-scripts/vdash.sh &> /dev/null
+| tee $HOME/.cargo/bin/vdash.sh &> /dev/null
 
-chmod u+x $HOME/safe-scripts/vdash.sh
+chmod u+x $HOME/.cargo/bin/vdash.sh
 
 vdash.sh
