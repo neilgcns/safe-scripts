@@ -312,8 +312,8 @@ fi
 # make script to start vdash with relavant log files
 echo -n "#!/bin/bash
 vdash $LOG_FILES" \
-| tee $HOME/.cargo/bin/vdash.sh &> /dev/null
+| tee $HOME/safe-scripts/vdash.sh &> /dev/null
 
-chmod u+x $HOME/.cargo/bin/vdash.sh
+chmod u+x $HOME/safe-scripts/vdash.sh
 
 vdash.sh
