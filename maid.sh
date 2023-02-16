@@ -248,9 +248,10 @@ LOG_FILES="$HOME/.safe/node/baby-fleming-nodes/sn-node-genesis/sn_node.log "
 for (( c=1; c<=$NODE_NUMBER; c++ ))
 do
 
+# --skip-auto-port-forwarding \
+
 RUST_LOG=sn_node=trace,qp2p=info\
  nohup $HOME/.safe/node/sn_node -vv \
- --skip-auto-port-forwarding \
  --local-addr 127.0.0.1:0 \
  --root-dir $HOME/.safe/node/baby-fleming-nodes/sn-node-$c \
  --log-dir $HOME/.safe/node/baby-fleming-nodes/sn-node-$c \
